@@ -1,0 +1,66 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Smart Home Loan EMI Calculator</title>
+  <style>
+    body { font-family: 'Segoe UI', sans-serif; margin: 0; background: #f4f9fc; color: #222; }
+    header { background: #004AAD; color: #fff; padding: 20px; text-align: center; border-bottom: 4px solid #003080; }
+    .container { max-width: 800px; margin: 30px auto; padding: 20px; background: #fff; border-radius: 10px; box-shadow: 0 4px 15px rgba(0,0,0,0.1); }
+    label { display: block; margin-top: 15px; font-weight: bold; }
+    input[type=number] { width: 100%; padding: 10px; margin-top: 5px; border: 1px solid #ccc; border-radius: 6px; }
+    .buttons { margin-top: 20px; display: flex; flex-wrap: wrap; gap: 10px; }
+    button { padding: 10px 20px; background: #004AAD; color: white; border: none; border-radius: 6px; cursor: pointer; font-weight: bold; transition: background 0.3s ease; }
+    button:hover { background: #003080; }
+    .result { margin-top: 20px; font-size: 1.2em; font-weight: bold; background: #e8f0fe; padding: 15px; border-radius: 6px; }
+    footer { text-align: center; margin-top: 40px; font-size: 0.9em; color: #666; }
+  </style>
+</head>
+<body>
+  <header><h1>Smart Home Loan EMI Calculator</h1></header>
+  <div class="container">
+    <label>Loan Amount (₹)</label><input type="number" id="loanAmount" placeholder="e.g. 5000000" />
+    <label>Annual Interest Rate (%)</label><input type="number" id="interestRate" placeholder="e.g. 8.5" />
+    <label>Loan Tenure (Years)</label><input type="number" id="loanTenure" placeholder="e.g. 20" />
+    <div class="buttons">
+      <button onclick="calculateEMI()">Calculate EMI</button>
+      <button onclick="resetForm()">Reset</button>
+      <button onclick="exportPDF()">Export to PDF</button>
+      <button onclick="emailQuote()">Email Quote</button>
+    </div>
+    <div class="result" id="result">Enter details to calculate your EMI.</div>
+  </div>
+  <footer>&copy; 2025 Smart Loan Tools. Built for DK Realty India.</footer>
+
+  <script>
+    function calculateEMI(){
+      const P = +document.getElementById('loanAmount').value;
+      const r = (+document.getElementById('interestRate').value)/12/100;
+      const n = (+document.getElementById('loanTenure').value)*12;
+      if (!P || !r || !n){
+        document.getElementById('result').innerText = 'Please fill all fields correctly.';
+        return;
+      }
+      const emi = (P*r*Math.pow(1+r,n)) / (Math.pow(1+r,n)-1);
+      document.getElementById('result').innerText = 'Your Monthly EMI is ₹'+emi.toFixed(2);
+    }
+    function resetForm(){
+      ['loanAmount','interestRate','loanTenure'].forEach(id=>document.getElementById(id).value='');
+      document.getElementById('result').innerText = 'Enter details to calculate your EMI.';
+    }
+    function exportPDF(){
+      const text = document.getElementById('result').innerText;
+      const blob = new Blob([text],{type:'application/pdf'});
+      const a = document.createElement('a');
+      a.href = URL.createObjectURL(blob);
+      a.download='loan-emi-quote.pdf';
+      a.click();
+    }
+    function emailQuote(){
+      const body = encodeURIComponent(document.getElementById('result').innerText);
+      window.location.href = 'mailto:?subject=Loan%20EMI%20Quote&body='+body;
+    }
+  </script>
+</body>
+</html>
